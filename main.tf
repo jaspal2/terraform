@@ -24,11 +24,9 @@ data "aws_ami" "app_ami" {
 
 resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id
+  description   =   "AWS instance fron terraform"
   instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.terraform_SG.id]
-
-  
-
   tags = {
     Name = "Hello World"
   }
@@ -38,6 +36,7 @@ resource "aws_instance" "web" {
 
 resource "aws_security_group" "terraform_SG"{
   name =   "terraform_SG"
+  description   =   "SG for AWS instance"
   vpc_id  =  data.aws_vpc.default.id
 }
 

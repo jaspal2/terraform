@@ -48,7 +48,7 @@ resource "aws_security_group_rule" "terraform_SG_ingress_https" {
   to_port           = 443
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws.aws_security_group.id
+  security_group_id = aws_security_group.terraform_SG.id
 }
 
 
@@ -59,6 +59,6 @@ resource "aws_security_group_rule" "terraform_SG_egress_https" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws.aws_security_group.id
+  security_group_id = aws_security_group.terraform_SG.id
 }
 

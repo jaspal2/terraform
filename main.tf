@@ -77,7 +77,7 @@ resource "aws_security_group_rule" "terraform_SG_egress_https" {
 
 
 resource "aws_s3_bucket" "s3_bucket_terraform" {
-  bucket = "jaspal_bucket_123"
+  bucket = "jaspal-bucket-123"
 
   tags = {
     Name        = "My bucket"

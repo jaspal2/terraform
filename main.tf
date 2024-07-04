@@ -51,7 +51,7 @@ resource "aws_instance" "web" {
 resource "aws_security_group" "terraform_SG"{
   name =   "terraform_SG"
   description   =   "SG for AWS instance"
-  vpc_id  =  data.aws_vpc.default.id
+  vpc_id  =  aws_vpc.vpc_custom.id
 }
 
 resource "aws_security_group_rule" "terraform_SG_ingress_https" {

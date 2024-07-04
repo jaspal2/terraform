@@ -26,12 +26,12 @@ resource "aws_vpc" "vpc_custom" {
 
 
 resource "aws_subnet" "subnet_custom1" {
-  vpc_id  =   "aws_vpc.vpc_custom.id"
+  vpc_id  =   aws_vpc.vpc_custom.id
   cidr_block =    "10.0.0.0/25"
 }
 
 resource "aws_subnet" "subnet_custom2" {
-  vpc_id  =   "aws_vpc.vpc_custom.id"
+  vpc_id  =   aws_vpc.vpc_custom.id
   cidr_block =    "10.0.0.128/25"
 }
 

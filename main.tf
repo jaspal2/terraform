@@ -22,6 +22,7 @@ data "aws_ami" "app_ami" {
 
 resource "aws_vpc" "vpc_custom" {
   cidr_block  =     "10.0.0.0/24"
+  default     =     true
 }
 
 
@@ -39,7 +40,7 @@ resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.terraform_SG.id]
-  vpc_id            = aws_vpc.vpc_custom.id
+  
   tags = {
     Name = "Hello World"
   }

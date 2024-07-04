@@ -75,3 +75,13 @@ resource "aws_security_group_rule" "terraform_SG_egress_https" {
   security_group_id = aws_security_group.terraform_SG.id
 }
 
+
+resource "aws_s3_bucket" "s3_bucket_terraform" {
+  bucket = "jaspal_bucket_123"
+
+  tags = {
+    Name        = "My bucket"
+    Environment = "Dev"
+  }
+}
+

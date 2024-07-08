@@ -36,6 +36,18 @@ resource "aws_subnet" "subnet_custom2" {
   cidr_block =    "10.0.0.128/25"
 }
 
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.vpc_custom.id
+
+  tags = {
+    Name = "GW from terraform"
+  }
+}
+
+resource "aws_internet_gateway_attachment" "example" {
+  internet_gateway_id = aws_internet_gateway.gw.id
+  vpc_id              = aws_vpc.vpc_custom.id
+}s
 
 resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id

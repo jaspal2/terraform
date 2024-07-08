@@ -44,10 +44,10 @@ resource "aws_internet_gateway" "gw" {
   }
 }
 
-resource "aws_internet_gateway_attachment" "example" {
+resource "aws_internet_gateway_attachment" "gw" {
   internet_gateway_id = aws_internet_gateway.gw.id
   vpc_id              = aws_vpc.vpc_custom.id
-}s
+}
 
 resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id

@@ -86,7 +86,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "public_instance" {
-  ami           = data.aws_ami.ubuntu.id
+  ami           = data.aws_ami.app_ami.id
   instance_type = "t3.micro"
 
   subnet_id     =  module.vpc_custom.public_subnets[0]
@@ -97,7 +97,16 @@ resource "aws_instance" "public_instance" {
 }
 
 
+resource "aws_instance" "private_instance" {
+  ami           = data.aws_ami.app_ami.id
+  instance_type = "t3.micro"
 
+  subnet_id     =  module.vpc_custom.private_subnets[0]
+
+  tags = {
+    Name = "HelloWorld"
+  }
+}
 
 
 

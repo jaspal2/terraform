@@ -36,7 +36,6 @@ module "vpc_custom" {
   }
 }
 
-
 module "terraform_sg_custom" {
   source = "terraform-aws-modules/security-group/aws"
 
@@ -59,22 +58,6 @@ module "terraform_sg_custom" {
       cidr_blocks = "0.0.0.0/0"
     }
   ]
-
-  
-
-}
-
-
-
-
-resource "aws_instance" "public_instance" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
-
-  
-  tags = {
-    Name = "HelloWorld"
-  }
 }
 
 

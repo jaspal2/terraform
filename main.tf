@@ -27,6 +27,10 @@ module "vpc_custom" {
   azs             = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
   private_subnets = ["10.0.0.0/28", "10.0.0.16/28", "10.0.0.32/28"]
   public_subnets  = ["10.0.0.48/28", "10.0.0.64/28", "10.0.0.80/28"]
+  
+  enable_nat_gateway = true
+  single_nat_gateway = true
+  one_nat_gateway_per_az = false  
 
   
   tags = {
@@ -84,6 +88,20 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "web" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t3.micro"
+
+  subnet_id     =  module.vpc_custom.public_subnets[0]
+
+  tags = {
+    Name = "HelloWorld"
+  }
+}
+
+
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.micro"
+
+  subnet_id     =  module.vpc_custom.private_subnets[0]
 
   tags = {
     Name = "HelloWorld"

@@ -1,4 +1,18 @@
+data "aws_ami" "app_ami" {
+  most_recent = true
 
+  filter {
+    name   = "name"
+    values = ["bitnami-tomcat-*-x86_64-hvm-ebs-nami"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["979382823631"] # Bitnami
+}
 
 
 module "vpc_custom" {
@@ -22,6 +36,7 @@ module "vpc_custom" {
   }
 }
 
+
 module "terraform_sg_custom" {
   source = "terraform-aws-modules/security-group/aws"
 
@@ -44,9 +59,47 @@ module "terraform_sg_custom" {
       cidr_blocks = "0.0.0.0/0"
     }
   ]
+
 }
 
 
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+resource "aws_instance" "public_instance" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.micro"
+
+  
+  tags = {
+    Name = "HelloWorld"
+  }
+}
+
+
+resource "aws_instance" "private_instance" {
+  ami           = data.aws_ami.app_ami.id
+  instance_type = "t3.micro"
+
+  subnet_id     =  module.vpc_custom.private_subnets[0]
+
+  tags = {
+    Name = "HelloWorld"
+  }
+}
 
 
 

@@ -15,9 +15,6 @@ data "aws_ami" "app_ami" {
 }
 
 
- 
-
-
 module "vpc_custom" {
   source = "terraform-aws-modules/vpc/aws"
 
@@ -68,7 +65,6 @@ module "terraform_sg_custom" {
 }
 
 
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -86,7 +82,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "public_instance" {
-  ami           = data.aws_ami.app_ami.id
+  ami           = data.aws_ami.ubuntu.id
   instance_type = "t3.micro"
 
   subnet_id     =  module.vpc_custom.public_subnets[0]

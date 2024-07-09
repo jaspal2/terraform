@@ -26,7 +26,7 @@ module "vpc_custom" {
 
   azs             = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
   private_subnets = ["10.0.0.0/28", "10.0.0.16/28", "10.0.0.32/28"]
-  public_subnets  = ["10.0.0.48/28", "10.0.0.64.28", "10.0.0.80/28"]
+  public_subnets  = ["10.0.0.48/28", "10.0.0.64/28", "10.0.0.80/28"]
 
   
   tags = {

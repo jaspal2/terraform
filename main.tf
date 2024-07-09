@@ -15,109 +15,73 @@ data "aws_ami" "app_ami" {
 }
 
 
- data "aws_vpc" "default" {
-    default = true
+ 
+
+
+module "vpc_custom" {
+  source = "terraform-aws-modules/vpc/aws"
+
+  name = "my-vpc"
+  cidr = "10.0.0.0/24"
+
+  azs             = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
+  private_subnets = ["10.0.0.0/28", "10.0.0.16/28", "10.0.0.32/28"]
+  public_subnets  = ["10.0.0.48/28", "10.0.0.64.28", "10.0.0.80/28"]
+
+  
+  tags = {
+    Terraform = "true"
+    Environment = "dev"
   }
+}
 
 
-module "terraform_SG_using_module" {
+module "terraform_sg_custom" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = "terraform_SG_using_module"
-  description = "Security group using terraform module"
-  vpc_id      = aws_vpc.vpc_custom.id
+  name        = "terraform_sg_custom"
+  description = "Security group for Https and https"
+  vpc_id      = module.vpc_custom.vpc_id
 
-  ingress_cidr_blocks      = ["10.10.0.0/16"]
-  ingress_rules            = ["https-443-tcp"]
+  ingress_cidr_blocks      = ["0.0.0.0/0"]
+  ingress_rules            = ["https-443-tcp", "http-80-tcp"]
   ingress_with_cidr_blocks = [
     {
-      from_port   = 8080
-      to_port     = 8090
+      from_port   = 0
+      to_port     = 65535
       protocol    = "tcp"
       description = "User-service ports"
-      cidr_blocks = "10.10.0.0/16"
+      cidr_blocks = "0.0.0.0/0"
     },
     {
       rule        = "postgresql-tcp"
       cidr_blocks = "0.0.0.0/0"
     },
-  ]
+  ],
+
+  {
+      from_port   = 443
+      to_port     = 65535
+      protocol    = "tcp"
+      description = "specific port"
+      cidr_blocks = "10.0.0.0/16"
+    }
+
 }
 
-resource "aws_vpc" "vpc_custom" {
-  cidr_block  =     "10.0.0.0/24"
- 
-}
 
 
-resource "aws_subnet" "subnet_custom1" {
-  vpc_id  =   aws_vpc.vpc_custom.id
-  cidr_block =    "10.0.0.0/25"
-}
+resource "aws_instance" "custom_instance" {
 
-resource "aws_subnet" "subnet_custom2" {
-  vpc_id  =   aws_vpc.vpc_custom.id
-  cidr_block =    "10.0.0.128/25"
-}
-
-resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.vpc_custom.id
-
-  tags = {
-    Name = "GW from terraform"
-  }
-}
-
-resource "aws_internet_gateway_attachment" "gw" {
-  internet_gateway_id = aws_internet_gateway.gw.id
-  vpc_id              = aws_vpc.vpc_custom.id
-}
-
-resource "aws_instance" "web" {
+  resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
-  vpc_security_group_ids = [aws_security_group.terraform_SG.id]
-  subnet_id   =    aws_subnet.subnet_custom1.id
+  vpc_security_group_ids = [module.terraform_sg_custom]
+  subnet_id   =    module.vpc_custom.public_subnets[0]
   
   tags = {
     Name = "Hello World"
   }
 }
 
-resource "aws_security_group" "terraform_SG"{
-  name =   "terraform_SG"
-  description   =   "SG for AWS instance"
-  vpc_id  =  aws_vpc.vpc_custom.id
 }
-
-resource "aws_security_group_rule" "terraform_SG_ingress_https" {
-  type              = "ingress"
-  description       = "Security group for Ingress request"
-  from_port         = 0
-  to_port           = 443
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.terraform_SG.id
-}
-
-
-resource "aws_security_group_rule" "terraform_SG_egress_https" {
-  type              = "egress"
-  description       = "Security group for egress request"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.terraform_SG.id
-}
-
-
-resource "aws_s3_bucket" "s3_bucket_terraform" {
-  bucket = "jaspal-bucket-123"
-
-  tags = {
-    Name        = "My bucket"
-    Environment = "Dev"
-  }
-}
-

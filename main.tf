@@ -20,6 +20,30 @@ data "aws_ami" "app_ami" {
   }
 
 
+module "terraform_SG_using_module" {
+  source = "terraform-aws-modules/security-group/aws"
+
+  name        = "terraform_SG_using_module"
+  description = "Security group using terraform module"
+  vpc_id      = aws.aws_vpc.vpc_custom.id
+
+  ingress_cidr_blocks      = ["10.10.0.0/16"]
+  ingress_rules            = ["https-443-tcp"]
+  ingress_with_cidr_blocks = [
+    {
+      from_port   = 8080
+      to_port     = 8090
+      protocol    = "tcp"
+      description = "User-service ports"
+      cidr_blocks = "10.10.0.0/16"
+    },
+    {
+      rule        = "postgresql-tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+  ]
+}
+
 resource "aws_vpc" "vpc_custom" {
   cidr_block  =     "10.0.0.0/24"
  

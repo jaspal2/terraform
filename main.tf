@@ -25,7 +25,7 @@ module "terraform_SG_using_module" {
 
   name        = "terraform_SG_using_module"
   description = "Security group using terraform module"
-  vpc_id      = aws.aws_vpc.vpc_custom.id
+  vpc_id      = aws_vpc.vpc_custom.id
 
   ingress_cidr_blocks      = ["10.10.0.0/16"]
   ingress_rules            = ["https-443-tcp"]

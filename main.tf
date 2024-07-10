@@ -40,7 +40,7 @@ module "vpc_custom" {
 module "public_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = "terraform_sg_custom"
+  name        = "public_sg"
   description = "Security group for Https and https"
   vpc_id      = module.vpc_custom.vpc_id
 
@@ -71,7 +71,7 @@ module "public_sg" {
 module "private_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = "terraform_sg_custom"
+  name        = "private_sg"
   description = "Security group for Https and https"
   vpc_id      = module.vpc_custom.vpc_id
 

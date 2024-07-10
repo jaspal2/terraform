@@ -37,7 +37,7 @@ module "vpc_custom" {
 }
 
 
-module "terraform_sg_custom" {
+module "public_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
   name        = "terraform_sg_custom"
@@ -57,6 +57,40 @@ module "terraform_sg_custom" {
     {
       rule        = "postgresql-tcp"
       cidr_blocks = "0.0.0.0/0"
+    },
+
+    {
+      rule        = "ssh-tcp"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+
+}
+
+
+module "private_sg" {
+  source = "terraform-aws-modules/security-group/aws"
+
+  name        = "terraform_sg_custom"
+  description = "Security group for Https and https"
+  vpc_id      = module.vpc_custom.vpc_id
+
+  ingress_cidr_blocks      = ["0.0.0.0/0"]
+  ingress_rules            = ["https-443-tcp", "http-80-tcp"]
+  ingress_with_cidr_blocks = [
+    {
+      from_port   = 0
+      to_port     = 65535
+      protocol    = "tcp"
+      description = "User-service ports"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      from_port   = 0
+      to_port     = 65535
+      protocol    = "tcp"
+      description = "User-service ports"
+      security_groups = [module.public_sg.security_group_id]
     },
 
     {
@@ -88,7 +122,7 @@ resource "aws_instance" "public_instance" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t3.micro"
 
-  vpc_security_group_ids = [module.terraform_sg_custom.security_group_id]
+  vpc_security_group_ids = [module.public_sg.security_group_id]
 
   subnet_id     =  module.vpc_custom.public_subnets[0]
 
@@ -107,7 +141,7 @@ resource "aws_instance" "private_instance" {
 
   instance_type = "t3.micro"
 
-  vpc_security_group_ids = [module.terraform_sg_custom.security_group_id]
+  vpc_security_group_ids = [module.private_sg.security_group_id]
 
   key_name = "aws"
 

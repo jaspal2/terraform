@@ -29,7 +29,7 @@ module "vpc_custom" {
   single_nat_gateway = true
   one_nat_gateway_per_az = false  
 
-  
+
   tags = {
     Terraform = "true"
     Environment = "dev"
@@ -57,6 +57,11 @@ module "terraform_sg_custom" {
     {
       rule        = "postgresql-tcp"
       cidr_blocks = "0.0.0.0/0"
+    },
+
+    {
+      rule        = "ssh-tcp"
+      cidr_blocks = "0.0.0.0/0"
     }
   ]
 
@@ -83,21 +88,34 @@ resource "aws_instance" "public_instance" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t3.micro"
 
+  security_group =. module.terraform_sg_custom.security_group_id
+
+  subnet_id     =  module.vpc_custom.public_subnets[0]
+
+  key_name = "aws"
   
   tags = {
-    Name = "HelloWorld"
+    Name = "Public instance"
   }
 }
 
 
 resource "aws_instance" "private_instance" {
   ami           = data.aws_ami.app_ami.id
+
   instance_type = "t3.micro"
+
+  security_group =. module.terraform_sg_custom.security_group_id
+
+  key_name = "aws"
 
   subnet_id     =  module.vpc_custom.private_subnets[0]
 
+
   tags = {
-    Name = "HelloWorld"
+
+    Name = "Private instance"
+
   }
 }
 

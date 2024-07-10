@@ -88,7 +88,7 @@ resource "aws_instance" "public_instance" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t3.micro"
 
-  security_groups = module.terraform_sg_custom.security_group_id
+  vpc_security_group_ids = [module.terraform_sg_custom.security_group_id]
 
   subnet_id     =  module.vpc_custom.public_subnets[0]
 
@@ -105,7 +105,7 @@ resource "aws_instance" "private_instance" {
 
   instance_type = "t3.micro"
 
-  security_groups = module.terraform_sg_custom.security_group_id
+  vpc_security_group_ids = [module.terraform_sg_custom.security_group_id]
 
   key_name = "aws"
 

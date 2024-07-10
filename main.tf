@@ -90,7 +90,7 @@ module "private_sg" {
       to_port     = 65535
       protocol    = "tcp"
       description = "User-service ports"
-      security_groups = [module.public_sg.security_group_id]
+      security_groups = "module.public_sg.security_group_id"
     },
 
     {

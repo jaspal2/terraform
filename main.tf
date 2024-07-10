@@ -92,6 +92,8 @@ resource "aws_instance" "public_instance" {
 
   subnet_id     =  module.vpc_custom.public_subnets[0]
 
+  associate_public_ip_address   =   true
+
   key_name = "aws"
 
   tags = {

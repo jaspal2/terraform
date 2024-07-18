@@ -18,12 +18,12 @@ data "aws_ami" "app_ami" {
 module "vpc_custom" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "my-vpc"
-  cidr = "10.0.0.0/24"
+  name = var.environment.name
+  cidr = var.environment.cidr_blocks
 
   azs             = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
-  private_subnets = ["10.0.0.0/28", "10.0.0.16/28", "10.0.0.32/28"]
-  public_subnets  = ["10.0.0.48/28", "10.0.0.64/28", "10.0.0.80/28"]
+  private_subnets = ["${var.environment.network_prefix}.0.0/28", "${var.environment.network_prefix}.0.16/28", "${var.environment.network_prefix}.0.32/28"]
+  public_subnets  = ["1${var.environment.network_prefix}.0.48/28", "${var.environment.network_prefix}.0.64/28", "${var.environment.network_prefix}.0.80/28"]
   
   enable_nat_gateway = true
   single_nat_gateway = true
@@ -32,7 +32,7 @@ module "vpc_custom" {
 
   tags = {
     Terraform = "true"
-    Environment = "dev"
+    Environment = "${var.environment.name}-dev"
   }
 }
 
@@ -40,7 +40,7 @@ module "vpc_custom" {
 module "public_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = "public_sg"
+  name        = "${var.environment.name}-public_sg"
   description = "Security group for Https and https"
   vpc_id      = module.vpc_custom.vpc_id
 
@@ -71,7 +71,7 @@ module "public_sg" {
 module "private_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = "private_sg"
+  name        = "${var.environment.name}-private_sg"
   description = "Security group for Https and https"
   vpc_id      = module.vpc_custom.vpc_id
 
@@ -131,7 +131,7 @@ resource "aws_instance" "public_instance" {
   key_name = "aws"
 
   tags = {
-    Name = "Public instance"
+    Name = "${var.environment.name} - Public instance"
   }
 }
 

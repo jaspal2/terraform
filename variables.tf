@@ -9,5 +9,19 @@ variable "ami_name" {
     default       =      "bitnami-tomcat-*-x86_64-hvm-ebs-nami"
 }
 
+variable "environment" {
+    description    =        "Development Environment"
+    type           =        object({
+        name       =        string
+        cidr_blocks        =       string    
+        network_prefix =    string
+    })
+
+     default ={
+        name    =       "vpc_from_variable"
+        cidr_blocks = "10.0.0.0/24"
+        network_prefix  =    "10.0"        
+}
+
 
 

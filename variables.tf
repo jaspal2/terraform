@@ -22,6 +22,7 @@ variable "environment" {
         cidr_blocks = "10.0.0.0/24"
         network_prefix  =    "10.0"        
 }
+}
 
 
 

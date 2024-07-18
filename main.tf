@@ -23,7 +23,7 @@ module "vpc_custom" {
 
   azs             = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
   private_subnets = ["${var.environment.network_prefix}.0.0/28", "${var.environment.network_prefix}.0.16/28", "${var.environment.network_prefix}.0.32/28"]
-  public_subnets  = ["1${var.environment.network_prefix}.0.48/28", "${var.environment.network_prefix}.0.64/28", "${var.environment.network_prefix}.0.80/28"]
+  public_subnets  = ["${var.environment.network_prefix}.0.48/28", "${var.environment.network_prefix}.0.64/28", "${var.environment.network_prefix}.0.80/28"]
   
   enable_nat_gateway = true
   single_nat_gateway = true
